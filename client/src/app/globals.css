@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #0A0A0A;
+    color: #FFFFFF;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #111111;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #333333;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #E97C00;
+  }
+}
+
+@layer components {
+  /* ── Glass Card ─────────────────────────────────── */
+  .glass-card {
+    @apply bg-surface-800/60 backdrop-blur-md border border-surface-400/20
+           rounded-2xl shadow-lg transition-all duration-300;
+  }
+
+  .glass-card:hover {
+    @apply border-brand-500/30 shadow-glow-orange;
+  }
+
+  /* ── Input Styles ───────────────────────────────── */
+  .input-field {
+    @apply w-full px-4 py-3 bg-surface-700 border border-surface-400/30
+           rounded-xl text-white placeholder-gray-500
+           focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/50
+           transition-all duration-200;
+  }
+
+  .input-label {
+    @apply block text-sm font-medium text-gray-300 mb-1.5;
+  }
+
+  /* ── Button Styles ──────────────────────────────── */
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-brand-500 to-brand-600
+           text-white font-semibold rounded-xl
+           hover:from-brand-600 hover:to-brand-700
+           focus:outline-none focus:ring-2 focus:ring-brand-500/50
+           active:scale-[0.98] transition-all duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100
+           shadow-lg shadow-brand-500/20;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-surface-600 border border-surface-400/30
+           text-white font-medium rounded-xl
+           hover:bg-surface-500 hover:border-brand-500/30
+           focus:outline-none focus:ring-2 focus:ring-brand-500/50
+           active:scale-[0.98] transition-all duration-200;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 text-gray-400 font-medium rounded-lg
+           hover:text-brand-500 hover:bg-surface-700
+           transition-all duration-200;
+  }
+
+  /* ── Stat Card ──────────────────────────────────── */
+  .stat-card {
+    @apply glass-card p-5 flex flex-col gap-2;
+  }
+
+  /* ── Risk Badges ────────────────────────────────── */
+  .badge-low {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full
+           text-xs font-semibold bg-emerald-500/15 text-emerald-400
+           border border-emerald-500/20;
+  }
+
+  .badge-medium {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full
+           text-xs font-semibold bg-amber-500/15 text-amber-400
+           border border-amber-500/20;
+  }
+
+  .badge-high {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full
+           text-xs font-semibold bg-red-500/15 text-red-400
+           border border-red-500/20;
+  }
+
+  /* ── Page Container ─────────────────────────────── */
+  .page-container {
+    @apply min-h-screen bg-surface-900 pt-20 pb-12 px-4 sm:px-6 lg:px-8;
+  }
+
+  .page-content {
+    @apply max-w-7xl mx-auto;
+  }
+
+  /* ── Loading Spinner ────────────────────────────── */
+  .spinner {
+    @apply w-8 h-8 border-3 border-surface-400 border-t-brand-500
+           rounded-full animate-spin;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-400 to-brand-600 bg-clip-text text-transparent;
+  }
+
+  .border-gradient {
+    border-image: linear-gradient(to right, #E97C00, #FB923C) 1;
+  }
+}
