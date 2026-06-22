@@ -56,6 +56,7 @@ export const batchAPI = {
   getReportPDF: (batchId) =>
     api.get(`/batches/${batchId}/report?format=pdf`, { responseType: 'blob' }),
   getStats: () => api.get('/batches/stats'),
+  getAgentStatus: () => api.get('/batches/agent-status'),
 };
 
 export default api;

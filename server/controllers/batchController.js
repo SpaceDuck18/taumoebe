@@ -5,61 +5,46 @@ const { calculateRisk } = require('../engines/riskEngine');
 const { generateComplianceReport } = require('../engines/complianceEngine');
 const { calculateCost } = require('../engines/costEngine');
 const { generatePDF } = require('../utils/pdfGenerator');
+const MasterCoordinator = require('../agents/MasterCoordinator');
 
 /**
  * POST /batches
- * Create a new food surplus batch
+ * Create a new food surplus batch via Multi-Agent Orchestration
+ * 
+ * The controller is now a thin wrapper — all business logic
+ * (validation, image analysis, risk modeling) is delegated to
+ * the MasterCoordinator Processor (MCP) which orchestrates
+ * specialized agents (DVA, VAA, RMA).
  */
 exports.createBatch = async (req, res) => {
   try {
-    const { quantity, category, preparationTime, notes, costPerMeal } = req.body;
+    console.log('\n══════════════════════════════════════════════════');
+    console.log('  🔄 Incoming Batch Request — Routing to MCP');
+    console.log('══════════════════════════════════════════════════');
 
-    // Validate required fields
-    if (!quantity || !category || !preparationTime) {
-      return res.status(400).json({ error: 'Quantity, category, and preparation time are required.' });
+    // Delegate entirely to the Master Coordinator
+    const result = await MasterCoordinator.processBatch(req.body, req.file, req.user);
+
+    if (!result.success) {
+      // Agent pipeline rejected the input — return structured error
+      return res.status(400).json({
+        error: result.error,
+        validationErrors: result.validationErrors || null,
+        agentTrace: result.agentTrace,
+        processingDuration: result.processingDuration,
+      });
     }
 
-    // Validate image upload
-    if (!req.file) {
-      return res.status(400).json({ error: 'Food photo is required for compliance.' });
-    }
-
-    const imageUrl = `/uploads/${req.file.filename}`;
-
-    // Calculate risk score
-    const risk = calculateRisk(category, preparationTime);
-
-    // Calculate cost estimation
-    const cost = calculateCost(quantity, costPerMeal || 0);
-
-    // Generate unique batch ID
-    const batchId = `TF-${uuidv4().split('-')[0].toUpperCase()}`;
-
-    // Create immutable batch record
-    const batch = await Batch.create({
-      batchId,
-      donorId: req.user._id,
-      quantity: parseInt(quantity),
-      category,
-      preparationTime: new Date(preparationTime),
-      imageUrl,
-      notes: notes || '',
-      riskLevel: risk.riskLevel,
-      expiryTime: risk.expiryTime,
-      costPerMeal: cost.costPerMeal,
-      totalValue: cost.totalValue,
-      status: 'created',
-    });
-
+    // Success — return batch with agent trace
     res.status(201).json({
-      batch,
-      risk: {
-        level: risk.riskLevel,
-        hoursRemaining: risk.hoursRemaining,
-        safeWindowHours: risk.safeWindowHours,
-      },
+      batch: result.batch,
+      risk: result.risk,
+      agentTrace: result.agentTrace,
+      processingDuration: result.processingDuration,
+      requiresHumanReview: result.requiresHumanReview,
     });
   } catch (error) {
+    console.error('❌ Unhandled controller error:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -174,6 +159,20 @@ exports.getDashboardStats = async (req, res) => {
         recentBatches,
       },
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+/**
+ * GET /batches/agent-status
+ * Returns multi-agent system health metrics and execution statistics.
+ * This endpoint provides observability into the agent orchestration pipeline.
+ */
+exports.getAgentStatus = (req, res) => {
+  try {
+    const metrics = MasterCoordinator.getAgentMetrics();
+    res.json({ agentStatus: metrics });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

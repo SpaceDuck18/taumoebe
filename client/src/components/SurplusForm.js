@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { batchAPI } from '@/lib/api';
+import AgentTrace from '@/components/AgentTrace';
 
 export default function SurplusForm() {
   const router = useRouter();
@@ -93,12 +94,15 @@ export default function SurplusForm() {
       submitData.append('image', selectedFile);
 
       const response = await batchAPI.create(submitData);
-      const { batch, risk } = response.data;
+      const { batch, risk, agentTrace, processingDuration, requiresHumanReview } = response.data;
 
       setSuccess({
         batchId: batch.batchId,
         riskLevel: risk.level,
         hoursRemaining: risk.hoursRemaining,
+        agentTrace: agentTrace || [],
+        processingDuration: processingDuration || null,
+        requiresHumanReview: requiresHumanReview || false,
       });
 
       // Reset form
@@ -144,6 +148,11 @@ export default function SurplusForm() {
                 </span>
                 {' · '}{success.hoursRemaining.toFixed(1)}h remaining
               </p>
+              {success.requiresHumanReview && (
+                <p className="text-xs text-amber-400 mt-2 flex items-center gap-1">
+                  <span>⚠️</span> Flagged for manual review due to low image confidence
+                </p>
+              )}
               <button
                 type="button"
                 onClick={() => router.push('/batches')}
@@ -153,6 +162,12 @@ export default function SurplusForm() {
               </button>
             </div>
           </div>
+          {/* Agent Trace Timeline */}
+          <AgentTrace
+            trace={success.agentTrace}
+            duration={success.processingDuration}
+            compact={false}
+          />
         </div>
       )}
 

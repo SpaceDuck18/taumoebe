@@ -65,10 +65,18 @@ app.use((err, req, res, next) => {
 // ── Start Server ─────────────────────────────────────────
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   app.listen(PORT, () => {
-    console.log(`\n🚀 Taumoeba Filter API running on http://localhost:${PORT}`);
-    console.log(`📋 Health check:  http://localhost:${PORT}/health`);
-    console.log(`🔐 Auth routes:   /auth/register, /auth/login`);
-    console.log(`📦 Batch routes:  /batches\n`);
+    console.log(`\n══════════════════════════════════════════════════`);
+    console.log(`  🚀 Taumoeba Multi-Agent System v1.0`);
+    console.log(`  📡 API running on http://localhost:${PORT}`);
+    console.log(`══════════════════════════════════════════════════`);
+    console.log(`  📋 Health check:     http://localhost:${PORT}/health`);
+    console.log(`  🔐 Auth routes:      /auth/register, /auth/login`);
+    console.log(`  📦 Batch routes:     /batches`);
+    console.log(`  🤖 Agent status:     /batches/agent-status`);
+    console.log(`  ─────────────────────────────────────────────`);
+    console.log(`  Agents: DVA (Validation) | VAA (Visual) | RMA (Risk)`);
+    console.log(`  Coordinator: MasterCoordinator (MCP)`);
+    console.log(`══════════════════════════════════════════════════\n`);
   });
 }
 

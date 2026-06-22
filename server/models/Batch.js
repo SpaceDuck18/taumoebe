@@ -61,6 +61,29 @@ const batchSchema = new mongoose.Schema({
     default: 'created',
     enum: ['created', 'mapped', 'completed', 'expired']
   },
+  // ── Agent System Fields ────────────────────────────────
+  agentTrace: {
+    type: [mongoose.Schema.Types.Mixed],
+    default: [],
+    select: true
+  },
+  imageAnalysis: {
+    type: {
+      qualityScore: { type: Number, default: 0 },
+      confidenceLevel: { type: String, enum: ['LOW', 'MEDIUM', 'HIGH'], default: 'MEDIUM' },
+      analyzedType: { type: String, default: '' },
+      degraded: { type: Boolean, default: false },
+    },
+    default: {}
+  },
+  riskModifiers: {
+    type: [mongoose.Schema.Types.Mixed],
+    default: []
+  },
+  requiresHumanReview: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now

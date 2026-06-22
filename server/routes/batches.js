@@ -10,6 +10,7 @@ const {
   getBatchById,
   getBatchReport,
   getDashboardStats,
+  getAgentStatus,
 } = require('../controllers/batchController');
 
 // Ensure uploads directory exists
@@ -47,6 +48,7 @@ const upload = multer({
 // All routes require authentication
 router.post('/', auth, upload.single('image'), createBatch);
 router.get('/stats', auth, getDashboardStats);  // Must be before /:id
+router.get('/agent-status', auth, getAgentStatus); // Agent observability
 router.get('/', auth, getAllBatches);
 router.get('/:id', auth, getBatchById);
 router.get('/:id/report', auth, getBatchReport);
